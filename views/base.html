@@ -1,33 +1,20 @@
 {{ define "base" }}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Star Realms Score Keeper</title>
-        <script
-            src="https://unpkg.com/htmx.org@1.9.9"
-            integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
-            crossorigin="anonymous"
-        ></script>
-        <link rel="stylesheet" href="/css/style.css" />
-    </head>
-    <body>
-        <header>
-            <h1 class="text-xl text-red-500">Star Realms Score Keeper</h1>
-        </header>
-        <main>
-            {{ if gt (len .Players) 0 }} 
-                <!-- TODO: Check if Current is nil, if it is we need to display "select-current" -->
-                {{ if eq .Current nil }}
-                    {{ template "select-current" . }}
-                {{ else }}
-                    {{ template "scoreboard" . }} 
-                {{ end }}
-            {{ else }} 
-                {{ template "new-game-form"  }} 
-            {{ end }}
-        </main>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Star Realms Score Keeper</title>
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body class="h-screen">
+    <header>
+      <h1 class="text-xl text-red-500">Star Realms Score Keeper</h1>
+    </header>
+    <div class="mx-auto flex h-full flex-col items-center justify-center md:w-2/3">
+      <main class="mx-auto w-full">{{ if gt (len .Players) 0 }} {{ if eq .Current nil }} {{ template "select-current" . }} {{ else }} {{ template "scoreboard" . }} {{ end }} {{ else }} {{ template "new-game-form" }} {{ end }}</main>
+    </div>
+  </body>
 </html>
 {{ end }}
