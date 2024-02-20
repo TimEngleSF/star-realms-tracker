@@ -1,3 +1,4 @@
+{{ define "base" }}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,13 +10,24 @@
             integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
             crossorigin="anonymous"
         ></script>
-        <link rel="stylesheet" href="index.css" />
+        <link rel="stylesheet" href="/css/style.css" />
     </head>
     <body>
-        {{ if gt (len .) 0 }} 
-            {{ template "scoreboard" . }} 
-        {{ else }} 
-            {{ template "new-game-form" . }} 
-        {{ end }}
+        <header>
+            <h1 class="text-xl text-red-500">Star Realms Score Keeper</h1>
+        </header>
+        <main>
+            {{ if gt (len .Players) 0 }} 
+                <!-- TODO: Check if Current is nil, if it is we need to display "select-current" -->
+                {{ if eq .Current nil }}
+                    {{ template "select-current" . }}
+                {{ else }}
+                    {{ template "scoreboard" . }} 
+                {{ end }}
+            {{ else }} 
+                {{ template "new-game-form"  }} 
+            {{ end }}
+        </main>
     </body>
 </html>
+{{ end }}
