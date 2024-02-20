@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-image: url("spacebg.jpeg");
+}
+
 .htmx-request {
-    background-color: blue;
+  background-color: blue;
+}
+
+@layer components {
+  .content-container {
+    @apply mx-auto flex w-2/3 flex-col items-center rounded-xl bg-slate-500/40 py-5;
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-violet-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600;
+  }
+
+  .input-txt {
+    @apply block w-full rounded-lg border-gray-700  bg-slate-900/90 px-4 py-3 text-sm text-gray-400 focus:ring-gray-600 disabled:pointer-events-none disabled:opacity-50;
+  }
 }
