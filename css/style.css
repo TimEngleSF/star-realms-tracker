@@ -652,6 +652,10 @@ video {
   width: 100%;
 }
 
+.flex-grow {
+  flex-grow: 1;
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -672,19 +676,6 @@ video {
   gap: 1rem;
 }
 
-.rounded-xl {
-  border-radius: 0.75rem;
-}
-
-.bg-slate-500\/40 {
-  background-color: rgb(100 116 139 / 0.4);
-}
-
-.py-5 {
-  padding-top: 1.25rem;
-  padding-bottom: 1.25rem;
-}
-
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
@@ -694,11 +685,6 @@ video {
   letter-spacing: 0.025em;
 }
 
-.text-red-500 {
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity));
-}
-
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -706,6 +692,15 @@ video {
 
 body {
   background-image: url("spacebg.jpeg");
+}
+
+header {
+  background-image: url("logo.png") !important;
+  background-size: 300px auto !important;
+  background-position: center !important;
+  background-repeat: no-repeat;
+  height: 200px !important;
+  width: 100% !important;
 }
 
 .htmx-request {
