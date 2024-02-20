@@ -51,7 +51,7 @@ func main() {
 				var player Player
 				player.Id = i
 				player.Authority = 50
-				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i+1))
+				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
 				Game.Players.AddPlayer(player)
 			}
 		}
