@@ -1,8 +1,14 @@
 {{ define "scoreboard" }}
 <section>
-    {{ range . }}
+    {{ range .Players }}
     <h2>{{ .Name }}</h2>
     <h3>Player {{ if eq .Id 1 }}1{{ else }}2{{ end }}</h3>
     {{ end }}
+
+    {{ if .Current }}
+        <p>Current Player {{ .Current.Name }}</p>
+    {{ end }}
+    <button hx-put="/reset" hx-target="main">Reset Game</button>
+
 </section>
 {{ end }}
