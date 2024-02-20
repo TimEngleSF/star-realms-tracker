@@ -1,0 +1,8 @@
+{{ define "scoreboard" }}
+<section>
+    {{ range . }}
+    <h2>{{ .Name }}</h2>
+    <h3>Player {{ if eq .Id 1 }}1{{ else }}2{{ end }}</h3>
+    {{ end }}
+</section>
+{{ end }}

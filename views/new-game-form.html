@@ -1,5 +1,10 @@
 {{ define "new-game-form" }}
-<form hx-post="/players" id="new-game-form">
+<form
+    hx-post="/players"
+    id="new-game-form"
+    hx-target="body"
+    hx-swap="outerHTML"
+>
     <div id="new-game-form__inputs-container">
         <div class="new-game-form__player-input-container">
             <label for="player1-name">Player 1:</label

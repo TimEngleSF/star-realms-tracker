@@ -38,21 +38,25 @@ func main() {
 	})
 
 	// Initialize players
-	players := make(Players, 2)
+	var playersData Players
 
 	e.GET("game", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "base.html", nil)
+		fmt.Println(len(playersData))
+		return c.Render(http.StatusOK, "base.html", playersData)
 	})
 
 	e.POST("players", func(c echo.Context) error {
-		for i := range players {
-			var player Player
-			player.Id = i
-			player.Authority = 50
-			player.Name = c.FormValue(fmt.Sprintf("player%d-name", i+1))
-			players[i] = player
+		if len(playersData) < 2 {
+			for i := 0; i < 2; i++ {
+				var player Player
+				player.Id = i
+				player.Authority = 50
+				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i+1))
+				fmt.Println("player", player)
+				playersData.AddPlayer(player)
+			}
 		}
-		return c.String(http.StatusOK, players[0].Name)
+		return c.Render(http.StatusAccepted, "scoreboard", playersData)
 	})
 	e.Logger.Fatal(e.Start(":8080"))
 }
