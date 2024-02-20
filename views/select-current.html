@@ -1,0 +1,16 @@
+{{ define "select-current" }}
+<form id="current-player_form" action="">
+    <p>Select first player</p>
+    <div>
+        <div>
+            <label for="player1-radio">{{ index .Players 0 }}</label>
+            <input type="radio" name="player-radio" id="player1-radio" value="{{ index .Players 0  }}">
+        </div>
+        <div>
+            <label for="player2-radio">{{ index .Players 1  }}</label>
+            <input type="radio" name="player-radio" id="player2-radio" value="{{ index .Players 1  }}">
+        </div>
+    </div>
+    <button type="submit">Choose</button>
+</form>
+{{ end }}
