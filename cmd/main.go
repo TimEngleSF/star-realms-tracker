@@ -30,7 +30,7 @@ func newTemplate() *Template {
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
-	e.Static("/css", "css")
+	e.Static("/public", "public")
 
 	// Set up templates for the templates in views folder
 	t := newTemplate()
@@ -40,10 +40,6 @@ func main() {
 	var Game Game
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello world!")
-	})
-
-	e.GET("game", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "base", Game)
 	})
 
@@ -70,7 +66,7 @@ func main() {
 			Game.Current = &Game.Players[sp]
 		}
 		// TODO: Display scoreboard
-		return c.Render(201, "base", Game)
+		return c.Render(201, "scoreboard", Game)
 		// Game.Current = &Game.Players[]
 	})
 	e.PUT("reset", func(c echo.Context) error {
