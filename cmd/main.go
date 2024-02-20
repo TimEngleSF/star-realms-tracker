@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -58,6 +60,19 @@ func main() {
 		return c.Render(http.StatusAccepted, "select-current", Game)
 	})
 
+	e.POST("current", func(c echo.Context) error {
+		sp, err := strconv.Atoi(c.FormValue("player-radio"))
+
+		if err != nil {
+			log.Println("Error parsing int from player-radio value")
+			Game.Current = &Game.Players[0]
+		} else {
+			Game.Current = &Game.Players[sp]
+		}
+		// TODO: Display scoreboard
+		return c.Render(201, "base", Game)
+		// Game.Current = &Game.Players[]
+	})
 	e.PUT("reset", func(c echo.Context) error {
 		Game.Restart()
 		return c.Render(http.StatusContinue, "new-game-form", Game)
