@@ -636,10 +636,6 @@ video {
   display: flex;
 }
 
-.h-full {
-  height: 100%;
-}
-
 .h-screen {
   height: 100vh;
 }
@@ -668,6 +664,10 @@ video {
   justify-content: center;
 }
 
+.justify-around {
+  justify-content: space-around;
+}
+
 .gap-3 {
   gap: 0.75rem;
 }
@@ -676,13 +676,18 @@ video {
   gap: 1rem;
 }
 
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
+.gap-6 {
+  gap: 1.5rem;
 }
 
-.tracking-wide {
-  letter-spacing: 0.025em;
+.bg-red-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .text-white {
@@ -691,11 +696,14 @@ video {
 }
 
 body {
-  background-image: url("spacebg.jpeg");
+  background-image: url("images/spacebg.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 header {
-  background-image: url("logo.png") !important;
+  background-image: url("images/logo.png") !important;
   background-size: 300px auto !important;
   background-position: center !important;
   background-repeat: no-repeat;
@@ -705,6 +713,14 @@ header {
 
 .htmx-request {
   background-color: blue;
+}
+
+.form-heading {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  letter-spacing: 0.025em;
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
 @media (min-width: 768px) {

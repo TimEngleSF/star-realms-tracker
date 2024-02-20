@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define the input and output paths
-INPUT="./css/input.css"
-OUTPUT="./css/style.css"
+INPUT="./public/input.css"
+OUTPUT="./public/style.css"
 
 # Function to start Tailwind CSS in watch mode
 watch() {

@@ -3,11 +3,14 @@
 @tailwind utilities;
 
 body {
-  background-image: url("spacebg.jpeg");
+  background-image: url("images/spacebg.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 header {
-  background-image: url("logo.png") !important;
+  background-image: url("images/logo.png") !important;
   background-size: 300px auto !important;
   background-position: center !important;
   background-repeat: no-repeat;
@@ -31,4 +34,8 @@ header {
   .input-txt {
     @apply block w-full rounded-lg border-gray-700  bg-slate-900/90 px-4 py-3 text-sm text-gray-400 focus:ring-gray-600 disabled:pointer-events-none disabled:opacity-50;
   }
+}
+
+.form-heading {
+  @apply text-xl tracking-wide text-white;
 }
