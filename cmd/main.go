@@ -28,6 +28,7 @@ func newTemplate() *Template {
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
+	e.Static("/css", "css")
 
 	// Set up templates for the templates in views folder
 	t := newTemplate()
