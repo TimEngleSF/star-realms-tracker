@@ -33,30 +33,33 @@ func main() {
 	t := newTemplate()
 	e.Renderer = t
 
+	/* INITIALIZE GAME */
+	var Game Game
+
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello world!")
 	})
 
-	// Initialize players
-	var playersData Players
-
 	e.GET("game", func(c echo.Context) error {
-		fmt.Println(len(playersData))
-		return c.Render(http.StatusOK, "base.html", playersData)
+		return c.Render(http.StatusOK, "base", Game)
 	})
 
 	e.POST("players", func(c echo.Context) error {
-		if len(playersData) < 2 {
+		if len(Game.Players) < 2 {
 			for i := 0; i < 2; i++ {
 				var player Player
 				player.Id = i
 				player.Authority = 50
 				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i+1))
-				fmt.Println("player", player)
-				playersData.AddPlayer(player)
+				Game.Players.AddPlayer(player)
 			}
 		}
-		return c.Render(http.StatusAccepted, "scoreboard", playersData)
+		return c.Render(http.StatusAccepted, "select-current", Game)
+	})
+
+	e.PUT("reset", func(c echo.Context) error {
+		Game.Restart()
+		return c.Render(http.StatusContinue, "new-game-form", Game)
 	})
 	e.Logger.Fatal(e.Start(":8080"))
 }
