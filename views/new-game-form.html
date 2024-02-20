@@ -1,0 +1,17 @@
+{{ define "new-game-form" }}
+<form hx-post="/players" id="new-game-form">
+    <div id="new-game-form__inputs-container">
+        <div class="new-game-form__player-input-container">
+            <label for="player1-name">Player 1:</label
+            ><input type="text" name="player1-name" id="player1-name" />
+        </div>
+        <div class="player-name_input-container">
+            <label for="player2-name">Player 2:</label
+            ><input type="text" name="player2-name" id="player2-name" />
+        </div>
+    </div>
+    <button class="btn" type="submit" id="new-game-form__button">
+        Start Game
+    </button>
+</form>
+{{ end }}
