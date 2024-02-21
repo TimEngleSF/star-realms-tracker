@@ -19,6 +19,14 @@ type Player struct {
 
 type Players []Player
 
+func (p *Player) incrementAuthority() {
+	p.Authority++
+}
+
+func (p *Player) decrementAuthority() {
+	p.Authority--
+}
+
 func (ps *Players) AddPlayer(p Player) {
 	*ps = append(*ps, p)
 }
