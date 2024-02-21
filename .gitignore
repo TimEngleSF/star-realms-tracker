@@ -1,2 +1,9 @@
 air.toml
 tmp/
+node_modules
+package.json
+package-lock.json
+tailwind.config.js
+tailwindcss
+twcss.sh
+.prettierrc
