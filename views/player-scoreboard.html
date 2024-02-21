@@ -1,12 +1,12 @@
 {{ define "player-score" }}
-<div class="flex flex-col">
-  <h3>{{ .Name }}</h3>
-  <div class="authority-img">
-    <p id="player{{ .Id }}-authority">{{ .Authority }}</p>
+<div class="mb-4 flex min-w-20 flex-col">
+  <h3 class="pr-2 text-center text-2xl font-semibold text-white">{{ .Name }}</h3>
+  <div class="authority-img flex items-center justify-center">
+    <p id="player{{ .Id }}-authority" class="text-3xl font-bold">{{ .Authority }}</p>
   </div>
-  <div>
-    <div hx-put="/score?player={{ .Id }}&action=subtract" hx-target="#player{{ .Id }}-authority">-</div>
-    <div hx-put="/score?player={{ .Id }}&action=add" hx-target="#player{{ .Id }}-authority">+</div>
+  <div class="flex justify-between md:min-w-32">
+    <div hx-put="/score?player={{ .Id }}&action=subtract" hx-target="#player{{ .Id }}-authority" class="score-btn font-outline-1 bg-red-500 text-red-300">-</div>
+    <div hx-put="/score?player={{ .Id }}&action=add" hx-target="#player{{ .Id }}-authority" class="score-btn bg-green-500">+</div>
   </div>
 </div>
 {{ end }}
