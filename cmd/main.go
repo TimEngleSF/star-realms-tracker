@@ -69,9 +69,28 @@ func main() {
 		return c.Render(201, "scoreboard", Game)
 		// Game.Current = &Game.Players[]
 	})
+
 	e.PUT("reset", func(c echo.Context) error {
 		Game.Restart()
 		return c.Render(http.StatusContinue, "new-game-form", Game)
 	})
-	e.Logger.Fatal(e.Start(":8080"))
+
+	e.PUT("score", func(c echo.Context) error {
+		id, err := strconv.Atoi(c.QueryParam("player"))
+		player := &Game.Players[id]
+		if err != nil {
+			log.Printf("Error parsing id for PUT '/score': %v\n", err)
+		}
+		scoreAction := c.QueryParam("action")
+		if scoreAction == "add" {
+			player.incrementAuthority()
+		} else if scoreAction == "subtract" {
+			player.decrementAuthority()
+		}
+
+		fmt.Println(Game.Players[id].Authority)
+		scoreStr := strconv.Itoa(player.Authority)
+		return c.String(200, scoreStr)
+	})
+	e.Logger.Fatal(e.Start(":8081"))
 }
