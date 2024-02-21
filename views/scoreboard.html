@@ -1,12 +1,27 @@
 {{ define "scoreboard" }}
 <section class="content-container">
-  <!-- {{ range .Players }}
-  <h2>{{ .Name }}</h2>
-  <h3>Player {{ if eq .Id 1 }}1{{ else }}2{{ end }}</h3>
-  {{ end }} {{ if .Current }}
-  <p>Current Player {{ .Current.Name }}</p>
-  {{ end }} -->
-  {{ range .Players}} {{ template "player-score" . }} {{ end }}
-  <button hx-put="/reset" hx-target="main">Reset Game</button>
+  <div class="flex w-full justify-center gap-10 px-9 md:justify-around">{{ range .Players}} {{ template "player-score" . }} {{ end }}</div>
+  <button
+    hx-put="/reset"
+    hx-target="main"
+    class="btn bg-gray-600"
+    hx-trigger="confirmed"
+    onClick="Swal.fire({
+      title: 'Confirm',
+      text: 'Reset Game?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      heightAuto: false,
+      background: '#334155',
+      color: 'white',
+      confirmButtonColor: '#22C55E',
+      cancelButtonColor: '#EF4444'
+    }).then(function(result) {
+      if (result.isConfirmed) {
+        htmx.trigger(this, 'confirmed');
+      }
+    }.bind(this))">
+    Reset Game
+  </button>
 </section>
 {{ end }}
