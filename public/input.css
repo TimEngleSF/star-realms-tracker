@@ -22,17 +22,46 @@ header {
   background-color: blue;
 }
 
+.authority-img {
+  position: relative;
+  background-image: url("images/authority.png") !important;
+  background-size: 8rem auto !important;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 8rem !important;
+  width: 100% !important;
+}
+
+@layer base {
+  .font-outline-05 {
+    -webkit-text-stroke: 0.5px black;
+  }
+  .font-outline-1 {
+    -webkit-text-stroke: 1px white;
+  }
+  .font-outline-2 {
+    -webkit-text-stroke: 2px black;
+  }
+  .font-outline-4 {
+    -webkit-text-stroke: 4px black;
+  }
+}
+
 @layer components {
   .content-container {
-    @apply mx-auto flex w-2/3 flex-col items-center rounded-xl bg-slate-500/40 py-5;
+    @apply mx-auto flex w-full flex-col items-center rounded-xl bg-slate-500/40 py-5;
   }
 
   .btn {
-    @apply inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-violet-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600;
+    @apply inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-blue-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600;
   }
 
   .input-txt {
     @apply block w-full rounded-lg border-gray-700  bg-slate-900/90 px-4 py-3 text-sm text-gray-400 focus:ring-gray-600 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .score-btn {
+    @apply rounded-md pt-1 text-center text-3xl font-bold md:h-12 md:w-12;
   }
 }
 
