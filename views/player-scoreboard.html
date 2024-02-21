@@ -1,0 +1,12 @@
+{{ define "player-score" }}
+<div class="flex flex-col">
+  <h3>{{ .Name }}</h3>
+  <div class="authority-img">
+    <p id="player{{ .Id }}-authority">{{ .Authority }}</p>
+  </div>
+  <div>
+    <div hx-put="/score?player={{ .Id }}&action=subtract" hx-target="#player{{ .Id }}-authority">-</div>
+    <div hx-put="/score?player={{ .Id }}&action=add" hx-target="#player{{ .Id }}-authority">+</div>
+  </div>
+</div>
+{{ end }}
