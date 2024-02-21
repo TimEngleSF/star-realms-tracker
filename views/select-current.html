@@ -1,14 +1,17 @@
 {{ define "select-current" }}
-<form id="current-player_form" action="">
-    <p>Select first player</p>
+<form id="current-player_form" hx-post="current" hx-target="main" hx-swap="innerHTML" class="content-container gap-6">
+  <h2 class="form-heading">Select first player</h2>
+  <div class="flex gap-6 text-white">
+    {{ range $i, $p := .Players }}
     <div>
-        {{ range $i, $p := .Players }}
-        <div>
-            <label for="player{{$i}}-radio">{{ $p.Name }}</label>
-            <input type="radio" name="player-radio" id="player{{$i}}-radio" value="{{ $p.Name }}">
-        </div>
-        {{ end }}
+      <input type="radio" name="player-radio" id="player{{$i}}-radio" value="{{ $i }}" required />
+      <label class="text-lg text-white" for="player{{$i}}-radio">{{ $p.Name }}</label>
     </div>
-    <button type="submit">Choose</button>
+    {{ end }}
+  </div>
+  <div class="flex w-full justify-around">
+    <button class="btn" type="submit">Continue</button>
+    <a class="btn bg-red-500" hx-put="/reset" hx-target="main">Reset</a>
+  </div>
 </form>
 {{ end }}
