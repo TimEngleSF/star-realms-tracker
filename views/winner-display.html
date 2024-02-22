@@ -1,0 +1,35 @@
+{{ define "winner-display" }}
+<section class="content-container">
+  <h2>Winner!</h2>
+  <p>{{ .Game.Winner.Name }} wins!</p>
+  <p>{{ .Game.Loser.Name }} loses</p>
+  <!-- TODO: Render different buttons depending on if user logged in -->
+  <!-- Add a "save-game" event -->
+  <button
+    hx-put="/reset"
+    hx-target="main"
+    class="btn bg-gray-600"
+    hx-trigger="confirmed"
+    onClick="Swal.fire({
+    title: 'Save Game',
+    text: 'Would you like to save your game data?',
+    showCancelButton: true,
+    cancelButtonText: 'No',
+    confirmButtonText: 'Yes',
+    heightAuto: false,
+    background: '#334155',
+    color: 'white',
+    confirmButtonColor: '#22C55E',
+    cancelButtonColor: '#EF4444'
+  }).then(function(result) {
+    if (result.isConfirmed) {
+      htmx.trigger(this, 'save-game');
+      htmx.trigger(this, 'confirmed')
+    } else {
+      htmx.trigger(this, 'confirmed')
+    }
+  }.bind(this))">
+    Reset Game
+  </button>
+</section>
+{{ end }}
