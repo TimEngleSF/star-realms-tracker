@@ -15,7 +15,7 @@ type Player struct {
 	Id        int
 	Name      string
 	Authority int
-	isCurrent bool
+	IsCurrent bool
 }
 
 type Players []Player
