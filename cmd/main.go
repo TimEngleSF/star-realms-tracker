@@ -48,13 +48,13 @@ func main() {
 
 	var Game Game
 
-	//Game := Game{
-	//	Players: []Player{
-	//		{Id: 0, Name: "Lily", Authority: 1},
-	//		{Id: 1, Name: "Kara", Authority: 50},
-	//	},
-	//}
-	//Game.Current = &Game.Players[0]
+	// Game := Game{
+	// 	Players: []Player{
+	// 		{Id: 0, Name: "Lily", Authority: 1, IsCurrent: true},
+	// 		{Id: 1, Name: "Kara", Authority: 50, IsCurrent: false},
+	// 	},
+	// }
+	// Game.Current = &Game.Players[0]
 	instance.Game = &Game
 
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -88,7 +88,7 @@ func main() {
 	})
 
 	/* CURRENT PLAYER */
-	// TODO: Set isCurrent on player to true
+	// TODO: Set IsCurrent on player to true
 	e.POST("current", func(c echo.Context) error {
 		sp, err := strconv.Atoi(c.FormValue("player-radio"))
 		if err != nil {
@@ -97,7 +97,7 @@ func main() {
 		} else {
 			Game.Current = &Game.Players[sp]
 		}
-		Game.Current.isCurrent = true
+		Game.Current.IsCurrent = true
 		return c.Render(201, "scoreboard", instance)
 	})
 
@@ -105,8 +105,8 @@ func main() {
 
 		for i := range Game.Players {
 			p := &Game.Players[i]
-			p.isCurrent = !p.isCurrent
-			if p.isCurrent {
+			p.IsCurrent = !p.IsCurrent
+			if p.IsCurrent {
 				Game.Current = p
 			}
 		}
