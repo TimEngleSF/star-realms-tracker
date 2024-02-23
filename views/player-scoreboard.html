@@ -1,12 +1,21 @@
-{{ define "player-score" }}
-<div class="mb-4 flex min-w-20 flex-col">
-  <h3 class="pr-2 text-center text-2xl font-semibold text-white">{{ .Name }}</h3>
-  <div class="authority-img flex items-center justify-center">
-    <p id="player{{ .Id }}-authority" class="text-3xl font-bold">{{ .Authority }}</p>
+{{ define "player-score" }} {{ if .IsCurrent }}
+<div class="flex min-w-20 flex-col rounded-md bg-emerald-100/20 px-8 py-4">
+  {{ else }}
+  <div class="flex min-w-20 flex-col px-8 py-4">
+    {{ end }}
+    <h3 class="pr-2 text-center text-2xl font-semibold text-white">{{ .Name }}</h3>
+    <div class="authority-img flex items-center justify-center">
+      <p id="player{{ .Id }}-authority" class="text-3xl font-bold">{{ .Authority }}</p>
+    </div>
+    <div class="flex justify-between md:min-w-32">
+      {{ if .IsCurrent }}
+      <div class="score-btn font-outline-1 bg-gray-700 text-gray-300">-</div>
+      <div hx-put="/score?player={{ .Id }}&action=add" hx-target="main" hx-swap="innerHTML" class="score-btn bg-green-500">+</div>
+      {{ else }}
+      <div hx-put="/score?player={{ .Id }}&action=subtract" hx-target="main" hx-swap="innerHTML" class="score-btn font-outline-1 bg-red-500 text-red-300">-</div>
+      <div class="score-btn bg-gray-700 text-gray-300">+</div>
+      {{ end}}
+    </div>
   </div>
-  <div class="flex justify-between md:min-w-32">
-    <div hx-put="/score?player={{ .Id }}&action=subtract" hx-target="#player{{ .Id }}-authority" class="score-btn font-outline-1 bg-red-500 text-red-300">-</div>
-    <div hx-put="/score?player={{ .Id }}&action=add" hx-target="#player{{ .Id }}-authority" class="score-btn bg-green-500">+</div>
-  </div>
+  {{ end }}
 </div>
-{{ end }}
