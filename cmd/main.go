@@ -32,6 +32,8 @@ type InstanceState struct {
 	Errors map[string]string
 }
 
+var tempID int
+
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -66,11 +68,25 @@ func main() {
 	})
 
 	e.GET("/", func(c echo.Context) error {
-
-		for _, p := range Game.Players {
-			fmt.Println(p.Authority)
+		// TODO: Set up in memory store for games
+		// TODO: Install uuid
+		// TODO: Setup supabase
+		hasCookie := false
+		id, err := readCookie(c, "id")
+		if err != nil {
+			log.Println("Error reading id cookie:", err)
+		}
+		if id != "" {
+			hasCookie = true
 		}
 
+		if !hasCookie {
+			// TODO: Setup a new Instance with new Game
+			// TODO: add ID to Instance type
+			tempID++
+			c = setCookie(c, "id", strconv.Itoa(tempID))
+		}
+		fmt.Println("ID:", id, hasCookie)
 		return c.Render(http.StatusOK, "base", instance)
 	})
 
@@ -88,7 +104,6 @@ func main() {
 	})
 
 	/* CURRENT PLAYER */
-	// TODO: Set IsCurrent on player to true
 	e.POST("current", func(c echo.Context) error {
 		sp, err := strconv.Atoi(c.FormValue("player-radio"))
 		if err != nil {
@@ -161,4 +176,22 @@ func main() {
 		return c.Render(200, "scoreboard", instance)
 	})
 	e.Logger.Fatal(e.Start(":8081"))
+}
+
+func readCookie(c echo.Context, ck string) (string, error) {
+	cookie, err := c.Cookie(ck)
+	if err != nil {
+		return "", nil
+	}
+	return cookie.Value, nil
+}
+
+func setCookie(c echo.Context, name, value string) echo.Context {
+	cookie := new(http.Cookie)
+	cookie.Name = name
+	cookie.Value = value
+	c.SetCookie(cookie)
+
+	return c
+
 }
