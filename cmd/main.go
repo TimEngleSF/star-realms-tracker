@@ -25,11 +25,11 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-func newTemplate() *Template {
-	return &Template{
-		templates: template.Must(template.ParseGlob("views/*.html")),
-	}
-}
+// func newTemplate() *Template {
+// 	return &Template{
+// 		templates: template.Must(template.ParseGlob("views/*.html")),
+// 	}
+// }
 
 var tempID int
 
@@ -39,8 +39,8 @@ func main() {
 	e.Static("/public", "public")
 
 	// Set up templates for the templates in views folder
-	t := newTemplate()
-	e.Renderer = t
+	// t := newTemplate()
+	// e.Renderer = t
 
 	/* INITIALIZE INSTANCE */
 	instance := game.InstanceState{Errors: make(map[string]string)}
