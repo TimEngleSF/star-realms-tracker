@@ -115,7 +115,7 @@ func main() {
 		}
 		Game.Current.IsCurrent = true
 		return render(c, 201, views.ScoreboardTemplate(Game))
-		return c.Render(201, "scoreboard", instance)
+		// return c.Render(201, "scoreboard", instance)
 	})
 
 	e.PUT("current", func(c echo.Context) error {
@@ -127,14 +127,15 @@ func main() {
 				Game.Current = p
 			}
 		}
-
-		return c.Render(http.StatusContinue, "scoreboard", instance)
+		return render(c, http.StatusContinue, views.ScoreboardTemplate(Game))
+		// return c.Render(http.StatusContinue, "scoreboard", instance)
 	})
 
 	/* RESET GAME ENDPOINT*/
 	e.PUT("reset", func(c echo.Context) error {
 		Game.Restart()
-		return c.Render(http.StatusContinue, "new-game-form", instance)
+		return render(c, http.StatusContinue, views.NewGameForm())
+		// return c.Render(http.StatusContinue, "new-game-form", instance)
 	})
 
 	/* SCORE ENDPOINTS */
@@ -149,7 +150,8 @@ func main() {
 				"HX-Trigger",
 				`{"error": {"id": "scoreboard-error-msg", "message":  "Error updating score: Invalid player ID"}}`,
 			)
-			return c.Render(500, "scoreboard", instance)
+			return render(c, http.StatusInternalServerError, views.ScoreboardTemplate(Game))
+			// return c.Render(500, "scoreboard", instance)
 		}
 
 		// Get queried player and their score
@@ -172,10 +174,12 @@ func main() {
 			}
 			instance.Game.Winner = &Game.Players[winnerId]
 			instance.Game.Complete = true
-			return c.Render(201, "winner-display", instance)
+			return render(c, http.StatusOK, views.WinnerTemplate(Game))
+			// return c.Render(201, "winner-display", instance)
 		}
 		// Render updated scores
-		return c.Render(200, "scoreboard", instance)
+		return render(c, http.StatusOK, views.ScoreboardTemplate(Game))
+		// return c.Render(200, "scoreboard", instance)
 	})
 	e.Logger.Fatal(e.Start(":8081"))
 }
