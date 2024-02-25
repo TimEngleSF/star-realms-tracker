@@ -1,0 +1,37 @@
+package views
+
+import (
+	game "github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
+	"strconv"
+)
+
+var playerScoreboardClasses string
+
+templ PlayerScoreboardComponent(p game.Player) {
+	if p.IsCurrent {
+		playerScoreboardClasses = "flex min-w-20 flex-col rounded-md bg-emerald-100/20 px-8 py-4"
+	} else {
+		playerScoreboardClasses = "flex min-w-20 flex-col px-8 py-4"
+	}
+	<div class={ playerScoreboardClasses }>
+		<h3 class="pr-2 text-center text-2xl font-semibold text-white">{ p.Name }</h3>
+		<div class="authority-img flex items-center justify-center">
+			<p id={ "player" + strconv.Itoa(p.Id) + "-authority" } class="text-3xl font-bold">{ strconv.Itoa(p.Authority) }</p>
+		</div>
+		@PlayerScoreDisplayComponent(p)
+	</div>
+}
+
+templ PlayerScoreDisplayComponent(p game.Player) {
+	if p.IsCurrent {
+		<div class="flex justify-between md:min-w-32">
+			<div class="score-btn font-outline-1 bg-gray-700 text-gray-300">-</div>
+			<div hx-put={ "/score?player=" + strconv.Itoa(p.Id) + "&action=add" } hx-target="main" hx-swap="innerHTML" class="score-btn bg-green-500">+</div>
+		</div>
+	} else {
+		<div class="flex justify-between md:min-w-32">
+			<div hx-put={ "/score?player=" + strconv.Itoa(p.Id) + "&action=subtract" } hx-target="main" hx-swap="innerHTML" class="score-btn font-outline-1 bg-red-500 text-red-300">-</div>
+			<div class="score-btn bg-gray-700 text-gray-300">+</div>
+		</div>
+	}
+}

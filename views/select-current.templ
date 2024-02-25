@@ -1,0 +1,28 @@
+package views
+
+import (
+	game "github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
+	"strconv"
+)
+
+templ SelectCurrentPlayerTemplate(ps game.Players) {
+	<form id="current-player_form" hx-post="current" hx-target="main" hx-swap="innerHTML" class="content-container gap-6">
+		<h2 class="form-heading">Select first player</h2>
+		<div class="flex gap-6 text-white">
+			for _, p := range ps {
+				@PlayerSelection(strconv.Itoa(p.Id), p.Name)
+			}
+		</div>
+		<div class="flex w-full justify-around">
+			<a class="btn bg-red-500 hover:bg-red-600 focus:bg-red-600" hx-put="/reset" hx-target="main">Reset</a>
+			<button class="btn bg bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-600" type="submit">Continue</button>
+		</div>
+	</form>
+}
+
+templ PlayerSelection(id string, name string) {
+	<div>
+		<input type="radio" name="player-radio" id={ "player" + id + "-radio" } value={ id } required/>
+		<label class="text-lg text-white" for={ "player" + id + "-radio" }>{ name }</label>
+	</div>
+}
