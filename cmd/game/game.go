@@ -1,14 +1,25 @@
-package main
+package game
 
 import "time"
 
+type InstanceState struct {
+	Game   *Game
+	Errors map[string]string
+}
+
 type Game struct {
-	Players  Players
-	Current  *Player
-	Winner   *Player
-	Loser    *Player
-	Complete bool
-	Date     *time.Time
+	Players       Players
+	Current       *Player
+	Winner        *Player
+	Loser         *Player
+	Complete      bool
+	Date          *time.Time
+	CurrTurnScore *CurrTurnScore
+}
+
+type CurrTurnScore struct {
+	currPlayer  int
+	otherPlayer int
 }
 
 type Player struct {
@@ -20,11 +31,11 @@ type Player struct {
 
 type Players []Player
 
-func (p *Player) incrementAuthority() {
+func (p *Player) IncrementAuthority() {
 	p.Authority++
 }
 
-func (p *Player) decrementAuthority() {
+func (p *Player) DecrementAuthority() {
 	p.Authority--
 }
 

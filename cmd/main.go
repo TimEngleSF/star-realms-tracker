@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"io"
@@ -8,6 +9,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
+	"github.com/TimEngleSF/star-realms-score-keeper/views"
+	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -27,11 +31,6 @@ func newTemplate() *Template {
 	}
 }
 
-type InstanceState struct {
-	Game   *Game
-	Errors map[string]string
-}
-
 var tempID int
 
 func main() {
@@ -44,11 +43,11 @@ func main() {
 	e.Renderer = t
 
 	/* INITIALIZE INSTANCE */
-	instance := InstanceState{Errors: make(map[string]string)}
+	instance := game.InstanceState{Errors: make(map[string]string)}
 
 	/* INITIALIZE GAME */
 
-	var Game Game
+	var Game game.Game
 
 	// Game := Game{
 	// 	Players: []Player{
@@ -86,21 +85,23 @@ func main() {
 			tempID++
 			c = setCookie(c, "id", strconv.Itoa(tempID))
 		}
-		fmt.Println("ID:", id, hasCookie)
-		return c.Render(http.StatusOK, "base", instance)
+
+		fmt.Println(Game.Players)
+		return render(c, http.StatusOK, views.Index(Game))
 	})
 
 	e.POST("players", func(c echo.Context) error {
 		if len(Game.Players) < 2 {
 			for i := 0; i < 2; i++ {
-				var player Player
+				var player game.Player
 				player.Id = i
 				player.Authority = 50
 				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
 				Game.Players.AddPlayer(player)
 			}
 		}
-		return c.Render(http.StatusAccepted, "select-current", instance)
+		return render(c, http.StatusAccepted, views.SelectCurrentPlayerTemplate(Game.Players))
+		// return c.Render(http.StatusAccepted, "select-current", instance)
 	})
 
 	/* CURRENT PLAYER */
@@ -113,6 +114,7 @@ func main() {
 			Game.Current = &Game.Players[sp]
 		}
 		Game.Current.IsCurrent = true
+		return render(c, 201, views.ScoreboardTemplate(Game))
 		return c.Render(201, "scoreboard", instance)
 	})
 
@@ -157,9 +159,9 @@ func main() {
 
 		// Edit player's score
 		if scoreAction == "add" {
-			player.incrementAuthority()
+			player.IncrementAuthority()
 		} else if scoreAction == "subtract" {
-			player.decrementAuthority()
+			player.DecrementAuthority()
 		}
 		// When user score is zero
 		if *score == 0 {
@@ -176,6 +178,16 @@ func main() {
 		return c.Render(200, "scoreboard", instance)
 	})
 	e.Logger.Fatal(e.Start(":8081"))
+}
+
+func render(ctx echo.Context, status int, t templ.Component) error {
+	ctx.Response().Writer.WriteHeader(status)
+	err := t.Render(context.Background(), ctx.Response().Writer)
+	if err != nil {
+		return ctx.String(http.StatusInternalServerError, "failed to render response template")
+
+	}
+	return nil
 }
 
 func readCookie(c echo.Context, ck string) (string, error) {

@@ -1,0 +1,45 @@
+package views
+
+import (
+	game "github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
+)
+
+templ ScoreboardTemplate(g game.Game) {
+	<section class="content-container">
+		<div class="mb-6 flex w-full justify-center gap-10 px-9 md:justify-around">
+			for _, p := range g.Players {
+				@PlayerScoreboardComponent(p)
+			}
+		</div>
+		@resetNextTurnBtn()
+	</section>
+}
+
+templ resetNextTurnBtn() {
+	<div class="mb-6 flex gap-8">
+		<button
+			hx-put="/reset"
+			hx-target="main"
+			class="btn bg-gray-600 transition-all duration-300 hover:bg-gray-700 focus:bg-gray-700"
+			hx-trigger="confirmed"
+			onClick="Swal.fire({
+        title: 'Confirm',
+        text: 'Reset Game?',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        heightAuto: false,
+        background: '#334155',
+        color: 'white',
+        confirmButtonColor: '#22C55E',
+        cancelButtonColor: '#EF4444'
+      }).then(function(result) {
+        if (result.isConfirmed) {
+          htmx.trigger(this, 'confirmed');
+        }
+      }.bind(this))"
+		>
+			Reset Game
+		</button>
+		<button hx-put="/current" hx-target="main" hx-swap="innerHTML" class="btn bg-emerald-500 px-6 transition-all duration-300 hover:bg-emerald-600 focus:bg-emerald-600">Next Turn</button>
+	</div>
+}
