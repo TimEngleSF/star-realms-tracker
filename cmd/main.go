@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -70,35 +69,13 @@ func main() {
 
 	e.GET("/", handlers.HandleIndexPage(&instance))
 
-	e.POST("players", func(c echo.Context) error {
-		if len(Game.Players) < 2 {
-			for i := 0; i < 2; i++ {
-				var player game.Player
-				player.Id = i
-				player.Authority = 50
-				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
-				Game.Players.AddPlayer(player)
-			}
-		}
-		return render(c, http.StatusAccepted, views.SelectCurrentPlayerTemplate(Game.Players))
-		// return c.Render(http.StatusAccepted, "select-current", instance)
-	})
+	/* ADD PLAYERS */
+	e.POST("players", handlers.HandleAddPlayers(&instance))
 
 	/* CURRENT PLAYER */
 	e.POST("current", handlers.HandleSelectFirstPlayer(&instance))
 
-	e.PUT("current", func(c echo.Context) error {
-
-		for i := range Game.Players {
-			p := &Game.Players[i]
-			p.IsCurrent = !p.IsCurrent
-			if p.IsCurrent {
-				Game.Current = p
-			}
-		}
-		return render(c, http.StatusContinue, views.ScoreboardTemplate(Game))
-		// return c.Render(http.StatusContinue, "scoreboard", instance)
-	})
+	e.PUT("current", handlers.HandleUpdateCurrPlayer(&instance))
 
 	/* RESET GAME ENDPOINT*/
 	e.PUT("reset", func(c echo.Context) error {

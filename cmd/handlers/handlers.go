@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+/* INDEX SCREEN */
 func HandleIndexPage(ins *game.InstanceState) echo.HandlerFunc {
 	g := ins.Game
 	return func(c echo.Context) error {
@@ -36,6 +38,24 @@ func HandleIndexPage(ins *game.InstanceState) echo.HandlerFunc {
 	}
 }
 
+/* ADD PLAYERS SCREEN */
+func HandleAddPlayers(ins *game.InstanceState) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		g := ins.Game
+		if len(g.Players) < 2 {
+			for i := 0; i < 2; i++ {
+				var player game.Player
+				player.Id = i
+				player.Authority = 50
+				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
+				g.Players.AddPlayer(player)
+			}
+		}
+		return render(c, http.StatusAccepted, views.SelectCurrentPlayerTemplate(g.Players))
+	}
+}
+
+/* SELECT PLAYER SCREEN */
 func HandleSelectFirstPlayer(ins *game.InstanceState) echo.HandlerFunc {
 	g := ins.Game
 
@@ -49,5 +69,21 @@ func HandleSelectFirstPlayer(ins *game.InstanceState) echo.HandlerFunc {
 		}
 		g.Current.IsCurrent = true
 		return render(c, 201, views.ScoreboardTemplate(*g))
+	}
+}
+
+/* SCOREBOARD SCREEN */
+
+func HandleUpdateCurrPlayer(ins *game.InstanceState) echo.HandlerFunc {
+	g := ins.Game
+	return func(c echo.Context) error {
+		for i := range g.Players {
+			p := &g.Players[i]
+			p.IsCurrent = !p.IsCurrent
+			if p.IsCurrent {
+				g.Current = p
+			}
+		}
+		return render(c, http.StatusContinue, views.ScoreboardTemplate(*g))
 	}
 }
