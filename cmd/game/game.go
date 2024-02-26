@@ -56,7 +56,7 @@ func (g *Game) SwitchCurrentPlayer() {
 }
 
 func (ps *Players) ResetAuthorityDifference() {
-	for i, _ := range *ps {
+	for i := range *ps {
 		(*ps)[i].AuthorityDifference = 0
 	}
 }
