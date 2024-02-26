@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
+	"github.com/TimEngleSF/star-realms-score-keeper/cmd/handlers"
 	"github.com/TimEngleSF/star-realms-score-keeper/views"
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -57,6 +58,7 @@ func main() {
 	// }
 	// Game.Current = &Game.Players[0]
 	instance.Game = &Game
+	instance.Id = tempID
 
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -66,29 +68,7 @@ func main() {
 		}
 	})
 
-	e.GET("/", func(c echo.Context) error {
-		// TODO: Set up in memory store for games
-		// TODO: Install uuid
-		// TODO: Setup supabase
-		hasCookie := false
-		id, err := readCookie(c, "id")
-		if err != nil {
-			log.Println("Error reading id cookie:", err)
-		}
-		if id != "" {
-			hasCookie = true
-		}
-
-		if !hasCookie {
-			// TODO: Setup a new Instance with new Game
-			// TODO: add ID to Instance type
-			tempID++
-			c = setCookie(c, "id", strconv.Itoa(tempID))
-		}
-
-		fmt.Println(Game.Players)
-		return render(c, http.StatusOK, views.Index(Game))
-	})
+	e.GET("/", handlers.HandleIndexPage(&instance))
 
 	e.POST("players", func(c echo.Context) error {
 		if len(Game.Players) < 2 {
@@ -105,18 +85,7 @@ func main() {
 	})
 
 	/* CURRENT PLAYER */
-	e.POST("current", func(c echo.Context) error {
-		sp, err := strconv.Atoi(c.FormValue("player-radio"))
-		if err != nil {
-			log.Println("Error parsing int from player-radio value")
-			Game.Current = &Game.Players[0]
-		} else {
-			Game.Current = &Game.Players[sp]
-		}
-		Game.Current.IsCurrent = true
-		return render(c, 201, views.ScoreboardTemplate(Game))
-		// return c.Render(201, "scoreboard", instance)
-	})
+	e.POST("current", handlers.HandleSelectFirstPlayer(&instance))
 
 	e.PUT("current", func(c echo.Context) error {
 
@@ -181,9 +150,8 @@ func main() {
 		return render(c, http.StatusOK, views.ScoreboardTemplate(Game))
 		// return c.Render(200, "scoreboard", instance)
 	})
-	e.Logger.Fatal(e.Start(":8081"))
+	e.Logger.Fatal(e.Start(":8080"))
 }
-
 func render(ctx echo.Context, status int, t templ.Component) error {
 	ctx.Response().Writer.WriteHeader(status)
 	err := t.Render(context.Background(), ctx.Response().Writer)
@@ -192,22 +160,4 @@ func render(ctx echo.Context, status int, t templ.Component) error {
 
 	}
 	return nil
-}
-
-func readCookie(c echo.Context, ck string) (string, error) {
-	cookie, err := c.Cookie(ck)
-	if err != nil {
-		return "", nil
-	}
-	return cookie.Value, nil
-}
-
-func setCookie(c echo.Context, name, value string) echo.Context {
-	cookie := new(http.Cookie)
-	cookie.Name = name
-	cookie.Value = value
-	c.SetCookie(cookie)
-
-	return c
-
 }
