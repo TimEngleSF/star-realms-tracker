@@ -5,6 +5,7 @@ import "time"
 type InstanceState struct {
 	Game   *Game
 	Errors map[string]string
+	Id     int
 }
 
 type Game struct {

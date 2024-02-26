@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -10,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
+	"github.com/TimEngleSF/star-realms-score-keeper/cmd/handlers"
 	"github.com/TimEngleSF/star-realms-score-keeper/views"
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -57,6 +57,7 @@ func main() {
 	// }
 	// Game.Current = &Game.Players[0]
 	instance.Game = &Game
+	instance.Id = tempID
 
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -66,70 +67,15 @@ func main() {
 		}
 	})
 
-	e.GET("/", func(c echo.Context) error {
-		// TODO: Set up in memory store for games
-		// TODO: Install uuid
-		// TODO: Setup supabase
-		hasCookie := false
-		id, err := readCookie(c, "id")
-		if err != nil {
-			log.Println("Error reading id cookie:", err)
-		}
-		if id != "" {
-			hasCookie = true
-		}
+	e.GET("/", handlers.HandleIndexPage(&instance))
 
-		if !hasCookie {
-			// TODO: Setup a new Instance with new Game
-			// TODO: add ID to Instance type
-			tempID++
-			c = setCookie(c, "id", strconv.Itoa(tempID))
-		}
-
-		fmt.Println(Game.Players)
-		return render(c, http.StatusOK, views.Index(Game))
-	})
-
-	e.POST("players", func(c echo.Context) error {
-		if len(Game.Players) < 2 {
-			for i := 0; i < 2; i++ {
-				var player game.Player
-				player.Id = i
-				player.Authority = 50
-				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
-				Game.Players.AddPlayer(player)
-			}
-		}
-		return render(c, http.StatusAccepted, views.SelectCurrentPlayerTemplate(Game.Players))
-		// return c.Render(http.StatusAccepted, "select-current", instance)
-	})
+	/* ADD PLAYERS */
+	e.POST("players", handlers.HandleAddPlayers(&instance))
 
 	/* CURRENT PLAYER */
-	e.POST("current", func(c echo.Context) error {
-		sp, err := strconv.Atoi(c.FormValue("player-radio"))
-		if err != nil {
-			log.Println("Error parsing int from player-radio value")
-			Game.Current = &Game.Players[0]
-		} else {
-			Game.Current = &Game.Players[sp]
-		}
-		Game.Current.IsCurrent = true
-		return render(c, 201, views.ScoreboardTemplate(Game))
-		// return c.Render(201, "scoreboard", instance)
-	})
+	e.POST("current", handlers.HandleSelectFirstPlayer(&instance))
 
-	e.PUT("current", func(c echo.Context) error {
-
-		for i := range Game.Players {
-			p := &Game.Players[i]
-			p.IsCurrent = !p.IsCurrent
-			if p.IsCurrent {
-				Game.Current = p
-			}
-		}
-		return render(c, http.StatusContinue, views.ScoreboardTemplate(Game))
-		// return c.Render(http.StatusContinue, "scoreboard", instance)
-	})
+	e.PUT("current", handlers.HandleUpdateCurrPlayer(&instance))
 
 	/* RESET GAME ENDPOINT*/
 	e.PUT("reset", func(c echo.Context) error {
@@ -181,9 +127,8 @@ func main() {
 		return render(c, http.StatusOK, views.ScoreboardTemplate(Game))
 		// return c.Render(200, "scoreboard", instance)
 	})
-	e.Logger.Fatal(e.Start(":8081"))
+	e.Logger.Fatal(e.Start(":8080"))
 }
-
 func render(ctx echo.Context, status int, t templ.Component) error {
 	ctx.Response().Writer.WriteHeader(status)
 	err := t.Render(context.Background(), ctx.Response().Writer)
@@ -192,22 +137,4 @@ func render(ctx echo.Context, status int, t templ.Component) error {
 
 	}
 	return nil
-}
-
-func readCookie(c echo.Context, ck string) (string, error) {
-	cookie, err := c.Cookie(ck)
-	if err != nil {
-		return "", nil
-	}
-	return cookie.Value, nil
-}
-
-func setCookie(c echo.Context, name, value string) echo.Context {
-	cookie := new(http.Cookie)
-	cookie.Name = name
-	cookie.Value = value
-	c.SetCookie(cookie)
-
-	return c
-
 }
