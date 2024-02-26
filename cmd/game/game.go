@@ -24,20 +24,23 @@ type CurrTurnScore struct {
 }
 
 type Player struct {
-	Id        int
-	Name      string
-	Authority int
-	IsCurrent bool
+	Id                  int
+	Name                string
+	Authority           int
+	IsCurrent           bool
+	AuthorityDifference int
 }
 
 type Players []Player
 
 func (p *Player) IncrementAuthority() {
 	p.Authority++
+	p.AuthorityDifference++
 }
 
 func (p *Player) DecrementAuthority() {
 	p.Authority--
+	p.AuthorityDifference--
 }
 
 func (ps *Players) AddPlayer(p Player) {
@@ -49,6 +52,12 @@ func (g *Game) SwitchCurrentPlayer() {
 		g.Current = &g.Players[1]
 	} else {
 		g.Current = &g.Players[0]
+	}
+}
+
+func (ps *Players) ResetAuthorityDifference() {
+	for i, _ := range *ps {
+		(*ps)[i].AuthorityDifference = 0
 	}
 }
 
