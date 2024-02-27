@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -94,6 +95,21 @@ func NewInstance() InstanceState {
 	return i
 }
 
-type Games []InstanceState
+type Instances []InstanceState
 
-var GamesInMemory = Games{}
+var InstancesInMemory = Instances{}
+
+func (is *Instances) GetInstanceById(id string) (InstanceState, error) {
+	var ti InstanceState
+	for _, i := range *is {
+		if i.Id == id {
+			ti = i
+			break
+		}
+	}
+	if ti.Id == "" {
+		err := errors.New("Could not locate Client Instance")
+		return ti, err
+	}
+	return ti, nil
+}
