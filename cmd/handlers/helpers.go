@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -34,4 +35,12 @@ func setCookie(c echo.Context, name, value string) echo.Context {
 
 	return c
 
+}
+
+func getIdCookie(c echo.Context) (string, error) {
+	id, err := readCookie(c, "id")
+	if err != nil {
+		log.Println("Error reading id cookie:", err)
+	}
+	return id, err
 }
