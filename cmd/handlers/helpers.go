@@ -50,7 +50,7 @@ func getInstance(c echo.Context) (echo.Context, *game.InstanceState, error) {
 	id, _ := getIdCookie(c)
 	i, err := game.InstancesInMemory.GetInstanceById(id)
 	if err != nil {
-		return c, &i, err
+		return c, i, err
 	}
-	return c, &i, nil
+	return c, i, nil
 }
