@@ -40,20 +40,28 @@ func HandleIndexPage(c echo.Context) error {
 }
 
 /* ADD PLAYERS SCREEN */
-func HandleAddPlayers(ins *game.InstanceState) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		g := ins.Game
-		if len(g.Players) < 2 {
-			for i := 0; i < 2; i++ {
-				var player game.Player
-				player.Id = i
-				player.Authority = 50
-				player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
-				g.Players.AddPlayer(player)
-			}
-		}
-		return render(c, http.StatusAccepted, views.SelectCurrentPlayerTemplate(g.Players))
+func HandleAddPlayers(c echo.Context) error {
+	var i game.InstanceState
+	var err error
+	id, _ := getIdCookie(c)
+	i, err = game.InstancesInMemory.GetInstanceById(id)
+	if err != nil {
+		c.Response().Header().Set(
+			"HX-Trigger",
+			`{"error": {"id": "scoreboard-error-msg", "message":  "Error updating score: Invalid player ID"}}`,
+		)
 	}
+	g := i.Game
+	if len(g.Players) < 2 {
+		for i := 0; i < 2; i++ {
+			var player game.Player
+			player.Id = i
+			player.Authority = 50
+			player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
+			g.Players.AddPlayer(player)
+		}
+	}
+	return render(c, http.StatusAccepted, views.SelectCurrentPlayerTemplate(g.Players))
 }
 
 /* SELECT PLAYER SCREEN */

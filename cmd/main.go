@@ -67,7 +67,7 @@ func main() {
 	e.GET("/", handlers.HandleIndexPage)
 
 	/* ADD PLAYERS */
-	e.POST("players", handlers.HandleAddPlayers(&instance))
+	e.POST("players", handlers.HandleAddPlayers)
 
 	/* CURRENT PLAYER */
 	e.POST("current", handlers.HandleSelectFirstPlayer(&instance))
