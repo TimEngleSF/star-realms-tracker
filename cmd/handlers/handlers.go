@@ -16,12 +16,12 @@ func HandleIndexPage(c echo.Context) error {
 	// TODO: Set up in memory store for gamess
 	// TODO: Install uuid
 	// TODO: Setup supabase
-	var i game.InstanceState
+	var i *game.InstanceState
 	id, _ := getIdCookie(c)
 
 	if id == "" {
-		i = game.NewInstance()
-		game.InstancesInMemory = append(game.InstancesInMemory, i)
+		*i = game.NewInstance()
+		game.InstancesInMemory = append(game.InstancesInMemory, *i)
 		c = setCookie(c, "id", i.Id)
 	} else {
 		var err error
@@ -30,13 +30,29 @@ func HandleIndexPage(c echo.Context) error {
 		if err != nil {
 			fmt.Println("There was an error getting InstanceById", err)
 			// FIXME: Is there a better way to handle this error than just creating a new Instance?
-			i = game.NewInstance()
-			game.InstancesInMemory = append(game.InstancesInMemory, i)
+			*i = game.NewInstance()
+			game.InstancesInMemory = append(game.InstancesInMemory, *i)
 			c = setCookie(c, "id", i.Id)
 		}
 	}
 
 	return render(c, http.StatusOK, views.Index(*i.Game))
+}
+
+/* RESET GAME */
+func HandleResetGame(c echo.Context) error {
+	c, i, err := getInstance(c)
+	if err != nil {
+		c.Response().Header().Set(
+			"HX-Trigger",
+			`{"error": {"id": "scoreboard-error-msg", "message":  "Error getting user instance"}}`,
+		)
+	}
+	g := i.Game
+	g.Restart()
+	i.Game = g
+	return render(c, http.StatusAccepted, views.NewGameForm())
+
 }
 
 /* ADD PLAYERS SCREEN */
