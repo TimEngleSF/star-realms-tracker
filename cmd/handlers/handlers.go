@@ -41,14 +41,11 @@ func HandleIndexPage(c echo.Context) error {
 
 /* ADD PLAYERS SCREEN */
 func HandleAddPlayers(c echo.Context) error {
-	var i game.InstanceState
-	var err error
-	id, _ := getIdCookie(c)
-	i, err = game.InstancesInMemory.GetInstanceById(id)
+	c, i, err := getInstance(c)
 	if err != nil {
 		c.Response().Header().Set(
 			"HX-Trigger",
-			`{"error": {"id": "scoreboard-error-msg", "message":  "Error updating score: Invalid player ID"}}`,
+			`{"error": {"id": "scoreboard-error-msg", "message":  "Error getting user instance"}}`,
 		)
 	}
 	g := i.Game
@@ -58,6 +55,7 @@ func HandleAddPlayers(c echo.Context) error {
 			player.Id = i
 			player.Authority = 50
 			player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
+
 			g.Players.AddPlayer(player)
 		}
 	}
