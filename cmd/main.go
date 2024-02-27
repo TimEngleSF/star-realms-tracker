@@ -53,9 +53,8 @@ func main() {
 	// 		{Id: 1, Name: "Kara", Authority: 50, IsCurrent: false},
 	// 	},
 	// }
-	Game.Current = &Game.Players[0]
-	instance.Game = &Game
-	instance.Id = tempID
+	// Game.Current = &Game.Players[0]
+	// instance.Game = &Game
 
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -65,7 +64,7 @@ func main() {
 		}
 	})
 
-	e.GET("/", handlers.HandleIndexPage(&instance))
+	e.GET("/", handlers.HandleIndexPage)
 
 	/* ADD PLAYERS */
 	e.POST("players", handlers.HandleAddPlayers(&instance))

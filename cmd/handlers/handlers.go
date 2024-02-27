@@ -12,30 +12,31 @@ import (
 )
 
 /* INDEX SCREEN */
-func HandleIndexPage(ins *game.InstanceState) echo.HandlerFunc {
-	g := ins.Game
-	return func(c echo.Context) error {
-		// TODO: Set up in memory store for gamess
-		// TODO: Install uuid
-		// TODO: Setup supabase
-		hasCookie := false
-		id, err := readCookie(c, "id")
+func HandleIndexPage(c echo.Context) error {
+	// TODO: Set up in memory store for gamess
+	// TODO: Install uuid
+	// TODO: Setup supabase
+	var i game.InstanceState
+	id, _ := getIdCookie(c)
+
+	if id == "" {
+		i = game.NewInstance()
+		game.InstancesInMemory = append(game.InstancesInMemory, i)
+		c = setCookie(c, "id", i.Id)
+	} else {
+		var err error
+		i, err = game.InstancesInMemory.GetInstanceById(id)
+
 		if err != nil {
-			log.Println("Error reading id cookie:", err)
+			fmt.Println("There was an error getting InstanceById", err)
+			// FIXME: Is there a better way to handle this error than just creating a new Instance?
+			i = game.NewInstance()
+			game.InstancesInMemory = append(game.InstancesInMemory, i)
+			c = setCookie(c, "id", i.Id)
 		}
-		if id != "" {
-			hasCookie = true
-		}
-
-		if !hasCookie {
-			// TODO: SSSetup a new Instance with new Game
-			// TODO: add ID to Instance type
-			ins.Id++
-			c = setCookie(c, "id", strconv.Itoa(ins.Id))
-		}
-
-		return render(c, http.StatusOK, views.Index(*g))
 	}
+
+	return render(c, http.StatusOK, views.Index(*i.Game))
 }
 
 /* ADD PLAYERS SCREEN */
