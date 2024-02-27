@@ -123,42 +123,48 @@ func HandleUpdateCurrPlayer(c echo.Context) error {
 	return render(c, http.StatusContinue, views.ScoreboardTemplate(*g))
 }
 
-func HandleUpdateScore(ins *game.InstanceState) echo.HandlerFunc {
-	g := ins.Game
+func HandleUpdateScore(c echo.Context) error {
+	c, i, err := getInstance(c)
 
-	return func(c echo.Context) error {
-		id, err := strconv.Atoi(c.QueryParam("player"))
-		scoreAction := c.QueryParam("action")
-
-		if err != nil {
-			log.Printf("Error parsing id for PUT '/score': %v\n", err)
-			c.Response().Header().Set(
-				"HX-Trigger",
-				`{"error": {"id": "scoreboard-error-msg", "message":  "Error updating score: Invalid player ID"}}`,
-			)
-			return render(c, http.StatusInternalServerError, views.ScoreboardTemplate(*g))
-		}
-
-		player := &g.Players[id]
-		score := &player.Authority
-
-		if scoreAction == "add" {
-			player.IncrementAuthority()
-		} else if scoreAction == "subtract" {
-			player.DecrementAuthority()
-		}
-
-		if *score == 0 {
-			g.Loser = player
-			winnerId := 0
-			if id == 0 {
-				winnerId = 1
-			}
-			g.Winner = &g.Players[winnerId]
-			g.Complete = true
-			return render(c, http.StatusOK, views.WinnerTemplate(*g))
-		}
-
-		return render(c, http.StatusOK, views.ScoreboardTemplate(*g))
+	if err != nil {
+		c.Response().Header().Set(
+			"HX-Trigger",
+			`{"error": {"id": "scoreboard-error-msg", "message":  "Error getting user instance"}}`,
+		)
 	}
+	g := i.Game
+
+	id, err := strconv.Atoi(c.QueryParam("player"))
+	scoreAction := c.QueryParam("action")
+
+	if err != nil {
+		log.Printf("Error parsing id for PUT '/score': %v\n", err)
+		c.Response().Header().Set(
+			"HX-Trigger",
+			`{"error": {"id": "scoreboard-error-msg", "message":  "Error updating score: Invalid player ID"}}`,
+		)
+		return render(c, http.StatusInternalServerError, views.ScoreboardTemplate(*g))
+	}
+
+	player := &g.Players[id]
+	score := &player.Authority
+
+	if scoreAction == "add" {
+		player.IncrementAuthority()
+	} else if scoreAction == "subtract" {
+		player.DecrementAuthority()
+	}
+
+	if *score == 0 {
+		g.Loser = player
+		winnerId := 0
+		if id == 0 {
+			winnerId = 1
+		}
+		g.Winner = &g.Players[winnerId]
+		g.Complete = true
+		return render(c, http.StatusOK, views.WinnerTemplate(*g))
+	}
+
+	return render(c, http.StatusOK, views.ScoreboardTemplate(*g))
 }
