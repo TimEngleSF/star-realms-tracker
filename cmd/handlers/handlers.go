@@ -63,37 +63,48 @@ func HandleAddPlayers(c echo.Context) error {
 }
 
 /* SELECT PLAYER SCREEN */
-func HandleSelectFirstPlayer(ins *game.InstanceState) echo.HandlerFunc {
-	g := ins.Game
-
-	return func(c echo.Context) error {
-		sp, err := strconv.Atoi(c.FormValue("player-radio"))
-		if err != nil {
-			log.Println("Error parsing int from player-radio value")
-			g.Current = &g.Players[0]
-		} else {
-			g.Current = &g.Players[sp]
-		}
-		g.Current.IsCurrent = true
-		return render(c, 201, views.ScoreboardTemplate(*g))
+func HandleSelectFirstPlayer(c echo.Context) error {
+	c, i, err := getInstance(c)
+	if err != nil {
+		c.Response().Header().Set(
+			"HX-Trigger",
+			`{"error": {"id": "scoreboard-error-msg", "message":  "Error getting user instance"}}`,
+		)
 	}
+	g := i.Game
+
+	sp, err := strconv.Atoi(c.FormValue("player-radio"))
+	if err != nil {
+		log.Println("Error parsing int from player-radio value")
+		g.Current = &g.Players[0]
+	} else {
+		g.Current = &g.Players[sp]
+	}
+	g.Current.IsCurrent = true
+	return render(c, 201, views.ScoreboardTemplate(*g))
 }
 
 /* SCOREBOARD SCREEN */
 
-func HandleUpdateCurrPlayer(ins *game.InstanceState) echo.HandlerFunc {
-	g := ins.Game
-	return func(c echo.Context) error {
-		g.Players.ResetAuthorityDifference()
-		for i := range g.Players {
-			p := &g.Players[i]
-			p.IsCurrent = !p.IsCurrent
-			if p.IsCurrent {
-				g.Current = p
-			}
-		}
-		return render(c, http.StatusContinue, views.ScoreboardTemplate(*g))
+func HandleUpdateCurrPlayer(c echo.Context) error {
+	c, i, err := getInstance(c)
+
+	if err != nil {
+		c.Response().Header().Set(
+			"HX-Trigger",
+			`{"error": {"id": "scoreboard-error-msg", "message":  "Error getting user instance"}}`,
+		)
 	}
+	g := i.Game
+	g.Players.ResetAuthorityDifference()
+	for i := range g.Players {
+		p := &g.Players[i]
+		p.IsCurrent = !p.IsCurrent
+		if p.IsCurrent {
+			g.Current = p
+		}
+	}
+	return render(c, http.StatusContinue, views.ScoreboardTemplate(*g))
 }
 
 func HandleUpdateScore(ins *game.InstanceState) echo.HandlerFunc {

@@ -70,9 +70,9 @@ func main() {
 	e.POST("players", handlers.HandleAddPlayers)
 
 	/* CURRENT PLAYER */
-	e.POST("current", handlers.HandleSelectFirstPlayer(&instance))
+	e.POST("current", handlers.HandleSelectFirstPlayer)
 
-	e.PUT("current", handlers.HandleUpdateCurrPlayer(&instance))
+	e.PUT("current", handlers.HandleUpdateCurrPlayer)
 
 	/* RESET GAME ENDPOINT*/
 	e.PUT("reset", func(c echo.Context) error {
