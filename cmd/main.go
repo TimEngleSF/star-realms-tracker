@@ -4,9 +4,7 @@ import (
 	"context"
 	"html/template"
 	"io"
-	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
 	"github.com/TimEngleSF/star-realms-score-keeper/cmd/handlers"
@@ -49,13 +47,13 @@ func main() {
 
 	var Game game.Game
 
-	// Game := Game{
-	// 	Players: []Player{
+	// Game := game.Game{
+	// 	Players: []game.Player{
 	// 		{Id: 0, Name: "Lily", Authority: 1, IsCurrent: true},
 	// 		{Id: 1, Name: "Kara", Authority: 50, IsCurrent: false},
 	// 	},
 	// }
-	// Game.Current = &Game.Players[0]
+	Game.Current = &Game.Players[0]
 	instance.Game = &Game
 	instance.Id = tempID
 
@@ -81,53 +79,14 @@ func main() {
 	e.PUT("reset", func(c echo.Context) error {
 		Game.Restart()
 		return render(c, http.StatusContinue, views.NewGameForm())
-		// return c.Render(http.StatusContinue, "new-game-form", instance)
 	})
 
 	/* SCORE ENDPOINTS */
-	e.PUT("score", func(c echo.Context) error {
-		// Query ID and action
-		id, err := strconv.Atoi(c.QueryParam("player"))
-		scoreAction := c.QueryParam("action")
+	e.PUT("score", handlers.HandleUpdateScore(&instance))
 
-		if err != nil {
-			log.Printf("Error parsing id for PUT '/score': %v\n", err)
-			c.Response().Header().Set(
-				"HX-Trigger",
-				`{"error": {"id": "scoreboard-error-msg", "message":  "Error updating score: Invalid player ID"}}`,
-			)
-			return render(c, http.StatusInternalServerError, views.ScoreboardTemplate(Game))
-			// return c.Render(500, "scoreboard", instance)
-		}
-
-		// Get queried player and their score
-		player := &Game.Players[id]
-		score := &player.Authority
-		// Query score action
-
-		// Edit player's score
-		if scoreAction == "add" {
-			player.IncrementAuthority()
-		} else if scoreAction == "subtract" {
-			player.DecrementAuthority()
-		}
-		// When user score is zero
-		if *score == 0 {
-			instance.Game.Loser = player
-			winnerId := 0
-			if id == 0 {
-				winnerId = 1
-			}
-			instance.Game.Winner = &Game.Players[winnerId]
-			instance.Game.Complete = true
-			return render(c, http.StatusOK, views.WinnerTemplate(Game))
-			// return c.Render(201, "winner-display", instance)
-		}
-		// Render updated scores
-		return render(c, http.StatusOK, views.ScoreboardTemplate(Game))
-		// return c.Render(200, "scoreboard", instance)
-	})
+	/* LAUNCH SERVER */
 	e.Logger.Fatal(e.Start(":8080"))
+
 }
 func render(ctx echo.Context, status int, t templ.Component) error {
 	ctx.Response().Writer.WriteHeader(status)
