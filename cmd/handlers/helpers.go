@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 )
@@ -43,4 +44,13 @@ func getIdCookie(c echo.Context) (string, error) {
 		log.Println("Error reading id cookie:", err)
 	}
 	return id, err
+}
+
+func getInstance(c echo.Context) (echo.Context, *game.InstanceState, error) {
+	id, _ := getIdCookie(c)
+	i, err := game.InstancesInMemory.GetInstanceById(id)
+	if err != nil {
+		return c, i, err
+	}
+	return c, i, nil
 }

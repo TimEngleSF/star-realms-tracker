@@ -99,7 +99,7 @@ type Instances []InstanceState
 
 var InstancesInMemory = Instances{}
 
-func (is *Instances) GetInstanceById(id string) (InstanceState, error) {
+func (is *Instances) GetInstanceById(id string) (*InstanceState, error) {
 	var ti InstanceState
 	for _, i := range *is {
 		if i.Id == id {
@@ -109,7 +109,7 @@ func (is *Instances) GetInstanceById(id string) (InstanceState, error) {
 	}
 	if ti.Id == "" {
 		err := errors.New("Could not locate Client Instance")
-		return ti, err
+		return &ti, err
 	}
-	return ti, nil
+	return &ti, nil
 }

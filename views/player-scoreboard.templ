@@ -15,19 +15,20 @@ templ PlayerScoreboardComponent(p game.Player) {
 			<p id={ "player" + strconv.Itoa(p.Id) + "-authority" } class="text-3xl font-bold">{ strconv.Itoa(p.Authority) }</p>
 		</div>
 		@PlayerScoreDisplayComponent(p)
+		<p class="text-center text-white font-bold tracking-wide">Turn: { strconv.Itoa(p.AuthorityDifference) }</p>
 	</div>
 }
 
 templ PlayerScoreDisplayComponent(p game.Player) {
 	if p.IsCurrent {
 		<div class="flex justify-between md:min-w-32">
-			<div class="score-btn font-outline-1 bg-gray-700 text-gray-300">-</div>
+			<div hx-put={ "/score?player=" + strconv.Itoa(p.Id) + "&action=subtract" } hx-target="main" hx-swap="innerHTML" class="score-btn font-outline-1 bg-red-500 text-gray-300">-</div>
 			<div hx-put={ "/score?player=" + strconv.Itoa(p.Id) + "&action=add" } hx-target="main" hx-swap="innerHTML" class="score-btn bg-green-500">+</div>
 		</div>
 	} else {
 		<div class="flex justify-between md:min-w-32">
 			<div hx-put={ "/score?player=" + strconv.Itoa(p.Id) + "&action=subtract" } hx-target="main" hx-swap="innerHTML" class="score-btn font-outline-1 bg-red-500 text-red-300">-</div>
-			<div class="score-btn bg-gray-700 text-gray-300">+</div>
+			<div hx-put={ "/score?player=" + strconv.Itoa(p.Id) + "&action=add" } hx-target="main" hx-swap="innerHTML" class="score-btn bg-green-500">+</div>
 		</div>
 	}
 }
