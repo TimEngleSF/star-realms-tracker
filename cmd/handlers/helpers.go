@@ -46,7 +46,7 @@ func getIdCookie(c echo.Context) (string, error) {
 	return id, err
 }
 
-func getInstance(c echo.Context) (echo.Context, *game.InstanceState, error) {
+func getInstance(c echo.Context) (echo.Context, game.InstanceState, error) {
 	id, _ := getIdCookie(c)
 	i, err := game.InstancesInMemory.GetInstanceById(id)
 	if err != nil {

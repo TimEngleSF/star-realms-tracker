@@ -8,6 +8,7 @@ import (
 
 	"github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
 	"github.com/TimEngleSF/star-realms-score-keeper/views"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -16,13 +17,15 @@ func HandleIndexPage(c echo.Context) error {
 	// TODO: Set up in memory store for gamess
 	// TODO: Install uuid
 	// TODO: Setup supabase
-	var i *game.InstanceState
+	var i game.InstanceState
 	id, _ := getIdCookie(c)
 
 	if id == "" {
-		*i = game.NewInstance()
-		game.InstancesInMemory = append(game.InstancesInMemory, *i)
-		c = setCookie(c, "id", i.Id)
+		newId := uuid.NewString()
+		c = setCookie(c, "id", newId)
+
+		i = game.NewInstance(newId)
+		game.InstancesInMemory = append(game.InstancesInMemory, i)
 	} else {
 		var err error
 		i, err = game.InstancesInMemory.GetInstanceById(id)
@@ -30,8 +33,9 @@ func HandleIndexPage(c echo.Context) error {
 		if err != nil {
 			fmt.Println("There was an error getting InstanceById", err)
 			// FIXME: Is there a better way to handle this error than just creating a new Instance?
-			*i = game.NewInstance()
-			game.InstancesInMemory = append(game.InstancesInMemory, *i)
+			newId := uuid.NewString()
+			i = game.NewInstance(newId)
+			game.InstancesInMemory = append(game.InstancesInMemory, i)
 			c = setCookie(c, "id", i.Id)
 		}
 	}
