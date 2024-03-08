@@ -3,9 +3,11 @@ package game
 import (
 	"errors"
 	"time"
-
-	"github.com/google/uuid"
 )
+
+var InstancesInMemory = Instances{}
+
+type Instances []InstanceState
 
 type InstanceState struct {
 	Game   *Game
@@ -87,21 +89,17 @@ func NewGame() Game {
 
 	return g
 }
-func NewInstance() InstanceState {
+func NewInstance(id string) InstanceState {
 	g := NewGame()
 	var i = InstanceState{}
 	i.Game = &g
-	i.Id = uuid.NewString()
+	i.Id = id
 	return i
 }
 
-type Instances []InstanceState
-
-var InstancesInMemory = Instances{}
-
-func (is *Instances) GetInstanceById(id string) (*InstanceState, error) {
+func (is Instances) GetInstanceById(id string) (InstanceState, error) {
 	var ti InstanceState
-	for _, i := range *is {
+	for _, i := range is {
 		if i.Id == id {
 			ti = i
 			break
@@ -109,7 +107,7 @@ func (is *Instances) GetInstanceById(id string) (*InstanceState, error) {
 	}
 	if ti.Id == "" {
 		err := errors.New("Could not locate Client Instance")
-		return &ti, err
+		return ti, err
 	}
-	return &ti, nil
+	return ti, nil
 }
