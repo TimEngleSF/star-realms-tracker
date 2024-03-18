@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
 	"github.com/TimEngleSF/star-realms-score-keeper/views"
@@ -93,6 +94,10 @@ func HandleSelectFirstPlayer(c echo.Context) error {
 	}
 	g := i.Game
 
+	// Set start time of first turn
+	g.GameDuration.TurnStartTime = time.Now()
+
+	// Get first player id
 	sp, err := strconv.Atoi(c.FormValue("player-radio"))
 	if err != nil {
 		log.Println("Error parsing int from player-radio value")
@@ -100,6 +105,7 @@ func HandleSelectFirstPlayer(c echo.Context) error {
 	} else {
 		g.Current = &g.Players[sp]
 	}
+
 	g.Current.IsCurrent = true
 	return render(c, 201, views.ScoreboardTemplate(*g))
 }
@@ -116,14 +122,36 @@ func HandleUpdateCurrPlayer(c echo.Context) error {
 		)
 	}
 	g := i.Game
+
 	g.Players.ResetAuthorityDifference()
-	for i := range g.Players {
-		p := &g.Players[i]
+
+	// Calculate completed turn duration
+	gDuration := g.GameDuration
+	dur := time.Since(gDuration.TurnStartTime)
+
+	// Update GameDuration fields
+	gDuration.PrevTurnDuration = dur
+	gDuration.TotalDuration += dur
+
+	// Iterate over players
+	for n := range g.Players {
+		// Select first player
+		p := &g.Players[n]
+
+		// Add Turn duration for completed turn's current player
+		if p.IsCurrent {
+			t := p.TurnsDuration + dur
+			p.TurnsDuration = t
+		}
+		// Reverse p.IsCurrent boolean
 		p.IsCurrent = !p.IsCurrent
 		if p.IsCurrent {
 			g.Current = p
 		}
 	}
+	newTurnTime := time.Now()
+	gDuration.TurnStartTime = newTurnTime
+
 	return render(c, http.StatusContinue, views.ScoreboardTemplate(*g))
 }
 

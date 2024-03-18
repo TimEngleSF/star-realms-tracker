@@ -15,6 +15,12 @@ type InstanceState struct {
 	Id     string
 }
 
+type GameDuration struct {
+	TurnStartTime    time.Time
+	PrevTurnDuration time.Duration
+	TotalDuration    time.Duration
+}
+
 type Game struct {
 	Players       Players
 	Current       *Player
@@ -23,6 +29,7 @@ type Game struct {
 	Complete      bool
 	Date          *time.Time
 	CurrTurnScore *CurrTurnScore
+	GameDuration  *GameDuration
 }
 
 type CurrTurnScore struct {
@@ -36,6 +43,7 @@ type Player struct {
 	Authority           int
 	IsCurrent           bool
 	AuthorityDifference int
+	TurnsDuration       time.Duration
 }
 
 type Players []Player
@@ -78,6 +86,7 @@ func (g *Game) Restart() {
 	g.Loser = nil
 	g.Complete = false
 	g.Date = nil
+	g.GameDuration = &GameDuration{}
 }
 
 // TODO: In the future a db will be used and the pointer will no longer be necessary
@@ -86,7 +95,7 @@ func NewGame() Game {
 	var g Game
 	g.Players = Players{}
 	g.Complete = false
-
+	g.GameDuration = &GameDuration{}
 	return g
 }
 func NewInstance(id string) InstanceState {
