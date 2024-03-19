@@ -10,7 +10,17 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
+import (
+	"github.com/TimEngleSF/star-realms-score-keeper/cmd/game"
+	"strconv"
+	"time"
+)
+
+func durationInMin(d time.Duration) string {
+	//r := d.Round(time.Second)
+	r := d
+	return r.String()
+}
 
 func WinnerTemplate(g game.Game) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -25,33 +35,137 @@ func WinnerTemplate(g game.Game) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"content-container\"><h2>Winner!</h2><p>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"content-container min-w-[682px] min-h-[398px] text-white\"><h2 class=\"text-4xl text-white font-bold mb-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(g.Winner.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 7, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 16, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" wins!</p><p>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" wins!</h2><div class=\"flex justify-around text-2xl font-semibold w-1/2 mb-6\"><p class=\"text-green-500\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(g.Loser.Name)
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(g.Winner.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 8, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 19, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" loses</p><!-- TODO: Render different buttons depending on if user logged in --><!-- Add a \"save-game\" event --><button hx-put=\"/reset\" hx-target=\"main\" class=\"btn bg-gray-600\" hx-trigger=\"confirmed\" onClick=\"Swal.fire({\n    title: &#39;Save Game&#39;,\n    text: &#39;Would you like to save your game data?&#39;,\n    showCancelButton: true,\n    cancelButtonText: &#39;No&#39;,\n    confirmButtonText: &#39;Yes&#39;,\n    heightAuto: false,\n    background: &#39;#334155&#39;,\n    color: &#39;white&#39;,\n    confirmButtonColor: &#39;#22C55E&#39;,\n    cancelButtonColor: &#39;#EF4444&#39;\n  }).then(function(result) {\n    if (result.isConfirmed) {\n      htmx.trigger(this, &#39;save-game&#39;);\n      htmx.trigger(this, &#39;confirmed&#39;)\n    } else {\n      htmx.trigger(this, &#39;confirmed&#39;)\n    }\n  }.bind(this))\">Reset Game</button></section>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(": ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(g.Winner.Authority))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 19, Col: 57}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p class=\"text-xl text-red-500\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(g.Loser.Name)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 22, Col: 18}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(": ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(g.Loser.Authority))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 22, Col: 55}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div><div class=\"flex flex-col gap-2 mb-auto text-center bg-black/40 px-4 py-2 rounded-md\"><h3 class=\"text-4xl mb-2\">Game Duration</h3><p class=\"text-3xl\">Total: ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(durationInMin(g.GameDuration.TotalDuration))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 27, Col: 75}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p class=\"text-2xl text-green-500\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(g.Winner.Name)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 28, Col: 53}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(": ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(durationInMin(g.Winner.TurnsDuration))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 28, Col: 97}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p class=\"text-2xl text-red-500\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(g.Loser.Name)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 29, Col: 50}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(": ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(durationInMin(g.Loser.TurnsDuration))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/winner-display.templ`, Line: 29, Col: 93}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div><!-- TODO: Render different buttons depending on if user logged in --><!-- Add a \"save-game\" event --><button hx-put=\"/reset\" hx-target=\"main\" class=\"btn bg-gray-600\" hx-trigger=\"confirmed\" onClick=\"Swal.fire({\n    title: &#39;Save Game&#39;,\n    text: &#39;Would you like to save your game data?&#39;,\n    showCancelButton: true,\n    cancelButtonText: &#39;No&#39;,\n    confirmButtonText: &#39;Yes&#39;,\n    heightAuto: false,\n    background: &#39;#334155&#39;,\n    color: &#39;white&#39;,\n    confirmButtonColor: &#39;#22C55E&#39;,\n    cancelButtonColor: &#39;#EF4444&#39;\n  }).then(function(result) {\n    if (result.isConfirmed) {\n      htmx.trigger(this, &#39;save-game&#39;);\n      htmx.trigger(this, &#39;confirmed&#39;)\n    } else {\n      htmx.trigger(this, &#39;confirmed&#39;)\n    }\n  }.bind(this))\">Reset Game</button></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
