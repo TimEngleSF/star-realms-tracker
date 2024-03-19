@@ -74,7 +74,7 @@ func HandleAddPlayers(c echo.Context) error {
 		for i := 0; i < 2; i++ {
 			var player game.Player
 			player.Id = i
-			player.Authority = 50
+			player.Authority = 1
 			player.Name = c.FormValue(fmt.Sprintf("player%d-name", i))
 
 			g.Players.AddPlayer(player)
@@ -187,12 +187,25 @@ func HandleUpdateScore(c echo.Context) error {
 		player.DecrementAuthority()
 	}
 
+	// If a score is 0
 	if *score == 0 {
+		// Set game loser to player who's score is being updated
 		g.Loser = player
+		// Set winnerId to 0
 		winnerId := 0
+		// If player's id is 0
 		if id == 0 {
+			// The winner must be the other player with id of 1
 			winnerId = 1
 		}
+
+		// Update durations
+		gDuration := g.GameDuration
+		dur := time.Since(gDuration.TurnStartTime)
+		gDuration.TotalDuration += dur
+		g.Current.TurnsDuration += dur
+
+		// Set Game winner and game complete
 		g.Winner = &g.Players[winnerId]
 		g.Complete = true
 		return render(c, http.StatusOK, views.WinnerTemplate(*g))
